@@ -3,6 +3,7 @@ package org.adorsys.docusafe.transactional.impl.helper;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import org.adorsys.docusafe.business.types.complex.DocumentFQN;
+import org.adorsys.docusafe.transactional.exceptions.TxBaseException;
 import org.adorsys.docusafe.transactional.exceptions.TxParallelCommittingException;
 import org.adorsys.docusafe.transactional.impl.LastCommitedTxID;
 import org.adorsys.docusafe.transactional.impl.TxIDHashMap;
@@ -17,9 +18,9 @@ public class ParallelTransactionLogic {
     public static TxIDHashMapWrapper join(TxIDHashMapWrapper stateLastCommittedTx, TxIDHashMapWrapper stateAtBeginOfCurrentTx, TxIDHashMapWrapper stateAtEndOfCurrentTx, TxIDHashMap documentsReadInTx) {
 
         // if no parallel commits
-        LastCommitedTxID lastCommitedTxID = stateAtEndOfCurrentTx.getLastCommitedTxID();
+        TxID lastCommitedTxID = stateLastCommittedTx.getCurrentTxID();
         if (lastCommitedTxID != null && lastCommitedTxID.equals(stateAtBeginOfCurrentTx.getLastCommitedTxID())) {
-            return stateAtEndOfCurrentTx;
+            throw new TxBaseException("Nothing to merge. No parallel transactions committed.");
         }
 
         // changed files have same TxID as currentTxID
@@ -52,6 +53,5 @@ public class ParallelTransactionLogic {
                 .map(stateAtEndOfCurrentTx.getMap())
                 .mergedTxID(stateAtEndOfCurrentTx.getCurrentTxID())
                 .build();
-
     }
 }
