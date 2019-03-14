@@ -7,6 +7,6 @@ import org.adorsys.docusafe.transactional.types.TxID;
  */
 public class TxRacingConditionException extends TxBaseException {
     public TxRacingConditionException(TxID currentTx, TxID lastTx, TxID previous) {
-        super(currentTx  + " can not be committed, because the last commited tx is now " + lastTx + " but expected was " + previous );
+        super(currentTx  + " can not be committed, because the last committed tx is now " + lastTx + " but expected was " + previous );
     }
 }

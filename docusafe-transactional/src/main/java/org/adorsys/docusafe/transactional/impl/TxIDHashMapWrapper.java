@@ -1,19 +1,16 @@
 package org.adorsys.docusafe.transactional.impl;
 
+import lombok.*;
 import org.adorsys.docusafe.business.DocumentSafeService;
-import org.adorsys.docusafe.business.types.complex.DSDocument;
-import org.adorsys.docusafe.business.types.complex.DSDocumentMetaInfo;
-import org.adorsys.docusafe.business.types.complex.DocumentDirectoryFQN;
-import org.adorsys.docusafe.business.types.complex.DocumentFQN;
-import org.adorsys.docusafe.business.types.complex.UserIDAuth;
+import org.adorsys.docusafe.business.types.complex.*;
 import org.adorsys.docusafe.service.impl.UserMetaDataUtil;
 import org.adorsys.docusafe.service.types.DocumentContent;
 import org.adorsys.docusafe.transactional.exceptions.NoTxFoundForDocumentException;
-import org.adorsys.docusafe.transactional.types.TxBucketContentFQN;
 import org.adorsys.docusafe.transactional.exceptions.TxAlreadyClosedException;
 import org.adorsys.docusafe.transactional.exceptions.TxNotFoundException;
 import org.adorsys.docusafe.transactional.impl.helper.BucketContentFromHashMapHelper;
 import org.adorsys.docusafe.transactional.impl.helper.Class2JsonHelper;
+import org.adorsys.docusafe.transactional.types.TxBucketContentFQN;
 import org.adorsys.docusafe.transactional.types.TxID;
 import org.adorsys.encobject.types.ListRecursiveFlag;
 import org.slf4j.Logger;
@@ -21,7 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -31,6 +27,12 @@ import java.util.List;
 /**
  * Contains all documents, that exist for this transaction. the documents have been created from previous or this transaction.
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+@ToString
 public class TxIDHashMapWrapper {
     private final static Logger LOGGER = LoggerFactory.getLogger(TxIDHashMapWrapper.class);
     private final static DocumentFQN filenamebase = new DocumentFQN("TransactionalHashMap.txt");
@@ -42,22 +44,6 @@ public class TxIDHashMapWrapper {
     private Date endTx;
     private TxIDHashMap map = new TxIDHashMap();
 
-    public LastCommitedTxID getLastCommitedTxID() {
-        return lastCommitedTxID;
-    }
-
-    public TxID getCurrentTxID() {
-        return currentTxID;
-    }
-
-    public Date getBeginTx() {
-        return beginTx;
-    }
-
-    public Date getEndTx() {
-        return endTx;
-    }
-
     private TxIDHashMapWrapper(LastCommitedTxID lastCommitedTxID, TxID currentTx, Date beginTxDate) {
         this.lastCommitedTxID = lastCommitedTxID;
         this.currentTxID = currentTx;
@@ -65,10 +51,6 @@ public class TxIDHashMapWrapper {
         if (this.lastCommitedTxID == null) {
             this.lastCommitedTxID = new LastCommitedTxID("NULL");
         }
-    }
-
-    public TxIDHashMap getMap() {
-        return map;
     }
 
     public TxIDHashMapWrapper clone() {
